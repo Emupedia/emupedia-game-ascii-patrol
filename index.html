@@ -74,7 +74,7 @@ Even though a license fee is not paid for the use of Freeware Version software, 
 */
 
 </script>
-	
+
 	<style>
 
 		*
@@ -83,14 +83,14 @@ Even though a license fee is not paid for the use of Freeware Version software, 
 			padding:0;
 			margin:0;
 		}
-			
+
 		canvas
 		{
 			position: absolute;
 			display: block;
 			overflow:hidden;
 		}
-		
+
 		html, body
 		{
 			width:100%;
@@ -98,16 +98,16 @@ Even though a license fee is not paid for the use of Freeware Version software, 
 			background-color:#000;
 			overflow:hidden;
 		}
-		
+
 	</style>
 
 <script id="vs" type="x-shader/x-vertex">
 	attribute vec2 xy;
 	uniform float width;
 	uniform float height;
-	
+
 	varying vec4 tc;
-	
+
 	void main()
 	{
 		float cx = xy.x * 2.0/width - 1.0;
@@ -122,47 +122,47 @@ Even though a license fee is not paid for the use of Freeware Version software, 
 
 	uniform sampler2D fnt;
 	uniform sampler2D tex;
-	
+
 	varying vec4 tc;
-	
+
 	float round(in float x)
 	{
 		return floor(x+0.5);
 	}
-	
+
 	void main()
 	{
 		vec4 cell = texture2D(tex, tc.xy); // nearest
 
 		vec2 ofs = vec2(0.0,0.0);
-		
+
 		int attr2 = 45;
 		float attr  = round(cell.y * 255.0) / 16.0;
-		
+
 		float bg = floor(attr)/4.0;
 		float bx = round(fract(bg)*4.0) * 128.0 / 512.0;
 		float by = floor(bg)*112.0 / 512.0;
 
 		vec4 back = texture2D(fnt, vec2(bx,by) + ofs);
-		
+
 		float fg = fract(attr)*4.0;
 		float fx = round(fract(fg)*4.0) * 128.0;
 		float fy = floor(fg)*112.0;
 
 		float px = fract(tc.z)*8.0;
 		float py = fract(tc.w)*14.0;
-		
+
 		float glyph = round(cell.x * 255.0) / 16.0;
 		float gx = (round(fract(glyph)*16.0)*8.0 + fx + px) / 512.0;
 		float gy = (floor(glyph)*14.0 + fy + py) / 512.0;
 
 		vec4 front = texture2D(fnt, vec2(gx,gy) );
-		
+
 		gl_FragColor = mix(back,front,front.a);
 	}
 </script>
 
-	
+
 <script type="text/javascript">
 
 function DBG(ptr)
@@ -227,13 +227,13 @@ function PlaySfx(id, voice, loop, vol, pan)
 		if (id==33)
 		{
 			// hack car explode event
-			window.navigator.vibrate(500);	
+			window.navigator.vibrate(500);
 		}
 
 		if (id>=30 && id<=32)
 		{
 			// wheel jump
-			window.navigator.vibrate(50);	
+			window.navigator.vibrate(50);
 		}
 	}
 
@@ -253,12 +253,12 @@ function PlaySfx(id, voice, loop, vol, pan)
 			'fade_start': 0,
 			'fade_len' : 0,
 		};
-		
+
 		vol_node.gain.value = vol * sfx_vol / 10000.0;
-		
+
 		src_node.buffer = sfx_buf[id];
 		src_node.loop = loop!=0;
-		
+
 		src_node.onended = function()
 		{
 			var obj = sfx_voice_map[voice];
@@ -267,17 +267,17 @@ function PlaySfx(id, voice, loop, vol, pan)
 				sfx_voice_map[voice]=null;
 				delete sfx_voice_map[voice];
 				del_sfx(voice);
-				
+
 				obj.src_node.onended = null;
 				obj.src_node.disconnect();
 				obj.vol_node.disconnect();
 				obj.src_node.buffer=null;
 			}
 		}
-		
+
 		src_node.connect(vol_node);
 		vol_node.connect(audio_ctx.destination);
-		
+
 		src_node.start();
 	}
 }
@@ -307,15 +307,15 @@ function StopSfx(voice,fade)
 			for (var voice in sfx_voice_map)
 			{
 				var obj = sfx_voice_map[voice];
-				
+
 				if (obj.fade_len==0)
 				{
 					obj.fade_start = fade_begin;
 					obj.fade_len = fade/1000.0;
-					
+
 					var v0 = obj.gain * obj.vol / 10000.0;
 					var v1 = 0.0;
-					
+
 					obj.vol_node.gain.linearRampToValueAtTime(v0, obj.fade_start);
 					obj.vol_node.gain.linearRampToValueAtTime(v1, obj.fade_start + obj.fade_len);
 				}
@@ -328,10 +328,10 @@ function StopSfx(voice,fade)
 						var delta = (fade*obj.fade_len)/(fade_begin - obj.fade_start) - fade;
 						obj.fade_start = fade_begin - delta;
 						obj.fade_len = fade + delta;
-						
+
 						var v0 = obj.gain * obj.vol / 10000.0;
 						var v1 = 0.0;
-						
+
 						obj.vol_node.gain.linearRampToValueAtTime(v0, obj.fade_start);
 						obj.vol_node.gain.linearRampToValueAtTime(v1, obj.fade_start + obj.fade_len);
 					}
@@ -342,13 +342,13 @@ function StopSfx(voice,fade)
 		if (sfx_voice_map[voice] && sfx_voice_map[voice].fade_len == 0)
 		{
 			var obj = sfx_voice_map[voice];
-			
+
 			obj.fade_start = fade_begin;
 			obj.fade_len = fade/1000.0;
-			
+
 			var v0 = obj.gain * obj.vol / 10000.0;
 			var v1 = 0.0;
-			
+
 			obj.vol_node.gain.linearRampToValueAtTime(v0, obj.fade_start);
 			obj.vol_node.gain.linearRampToValueAtTime(v1, obj.fade_start + obj.fade_len);
 		}
@@ -361,7 +361,7 @@ function SetSfxParams(voice,vol,pan)
 	{
 		sfx_voice_map[voice].gain=vol;
 		sfx_voice_map[voice].pan=pan;
-		sfx_voice_map[voice].vol_node.gain.value = 
+		sfx_voice_map[voice].vol_node.gain.value =
 			sfx_voice_map[voice].gain * sfx_voice_map[voice].vol / 10000.0;
 	}
 }
@@ -386,76 +386,76 @@ function SetGain(mo3,sfx)
 }
 
 
-function init_audio() 
+function init_audio()
 {
 	var audioContext = window.AudioContext || window.webkitAudioContext;
-	
+
 	if (!audioContext)
 		return;
-	
+
 	audio_ctx = new audioContext();
-	
+
 	var bufsize = 2048;
 	if (audio_ctx)
 	{
 		audio_node = audio_ctx.createScriptProcessor(bufsize, 0, 2);
 		gain_mo3_node = audio_ctx.createGain();
-		
+
 		gain_mo3_node.gain.value = mo3_vol;
-		
+
 		gain_mo3_node.connect(audio_ctx.destination);
 	}
 	else
 	{
 		return;
 	}
-		
+
 	if (audio_node && gain_mo3_node)
 	{
 		sfx_voice_map = {};
-	
+
 		var ptr = set_audio(2,audio_ctx.sampleRate,bufsize);
-		
+
 		var sfx_count = get_sfx_count();
 		var arr_id = new Int32Array( Module.HEAPU8.buffer, get_sfx_arr(), sfx_count);
-		
+
 		sfx_buf = new Array(96);
-		
+
 		for (var sfx=0; sfx<sfx_count; sfx++)
 		{
 			var id   = arr_id[sfx];
 			var len  = get_sfx_len(id);
 			var data = new Int16Array( Module.HEAPU8.buffer, get_sfx_data(id), len);
-			
+
 			sfx_buf[id] = audio_ctx.createBuffer(1,len,44100);
 			var buf = sfx_buf[id].getChannelData(0);
-			
+
 			for (var i=0; i<len; i++)
 				buf[i] = data[i]/32768.0;
 		}
-		
+
 		audio_buf = new Int16Array( Module.HEAPU8.buffer, ptr, bufsize*2);
-	
+
 		audio_node.onaudioprocess = function(ev)
 		{
 			var samples = ev.outputBuffer.length;
 			get_audio(2,audio_ctx.sampleRate,samples);
-			
+
 			var left = ev.outputBuffer.getChannelData(0);
-			var right = ev.outputBuffer.getChannelData(1);			
-				
+			var right = ev.outputBuffer.getChannelData(1);
+
 			for (var i=0; i<samples; i++)
 			{
 				left[i] = audio_buf[2*i+0] / 32768;
 				right[i] = audio_buf[2*i+1] / 32768;
 			}
 		}
-		
+
 		audio_node.connect(gain_mo3_node);
 	}
 }
-  
-function toggleFullScreen() 
+
+function toggleFullScreen()
 {
   if (!document.fullscreenElement &&    // alternative standard method
       !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement ) {  // current working methods
@@ -497,7 +497,7 @@ function input_keyup(event)
 				shift ^= event.getModifierState("CapsLock");
 			if (!shift && code>=0x41 && code<=0x5A)
 				code += 0x20;
-			set_input(code); 
+			set_input(code);
 		}
 	}
 }
@@ -592,7 +592,7 @@ function input_touchstart(event)
 			// no more free touches
 			if (touch_mask === 0xFFFF)
 				break;
-				
+
 			var id = 0;
 			for (var bit=0; bit<16; bit++)
 			{
@@ -698,7 +698,7 @@ function input_keydown(event)
     }
 
     var handled = false;
-	
+
 	if (!event.ctrlKey && !event.altKey && event.keyCode!=16)
 	{
 		if (set_input && event.keyCode < 0x80)
@@ -709,12 +709,12 @@ function input_keydown(event)
 				shift ^= event.getModifierState("CapsLock");
 			if (!shift && code>=0x41 && code<=0x5A)
 				code += 0x20;
-			set_input(code | 0x80); 
+			set_input(code | 0x80);
 			handled=true;
 		}
 	}
-	
-	
+
+
     if (event.key !== undefined) {
        if (event.key === 'Enter' && event.altKey) {
           toggleFullScreen();
@@ -738,7 +738,7 @@ function SetInputHandlers(elem)
 {
 	elem.addEventListener('keydown', input_keydown, { passive: false });
 	elem.addEventListener('keyup', input_keyup, { passive: false });
-	
+
 	elem.addEventListener('touchstart', input_touchstart, { passive: false });
 	elem.addEventListener('touchmove', input_touchmove, { passive: false });
 	elem.addEventListener('touchend', input_touchendcancel, { passive: false });
@@ -766,7 +766,7 @@ function resize(e)
 	var realToCSSPixels = Math.floor( window.devicePixelRatio || 1 );
 	if (realToCSSPixels<1)
 		realToCSSPixels = 1;
-	
+
 	var w = window.innerWidth;
 	var h = window.innerHeight;
 
@@ -793,22 +793,22 @@ function resize(e)
 		width=80;
 	if (height<25)
 		height=25;
-	
+
 	ctx.canvas.width = width*cell_w * realToCSSPixels;
 	ctx.canvas.height = height*cell_h * realToCSSPixels;
-	
+
 	vp_w=width*cell_w;
 	vp_h=height*cell_h;
 
 	var dw;
 	var dh;
-	
+
 	if (vp_w<w-cell_w && vp_h<h-cell_h)
 	{
 		var zoom_x = w / vp_w;
 		var zoom_y = h / vp_h;
 		var zoom = Math.min(zoom_x,zoom_y);
-		
+
 		dw = Math.floor(vp_w*zoom);
 		dh = Math.floor(vp_h*zoom);
 	}
@@ -831,7 +831,7 @@ function resize(e)
 	touch_rect_y = Math.floor( (h - dh)/2 );
 	touch_rect_u = width;
 	touch_rect_v = height;
-	
+
 	ctx.canvas.style.width = "" + dw + "px";
 	ctx.canvas.style.height = "" + dh + "px";
 	ctx.canvas.style.left = "" + Math.floor( (w - dw)/2 ) + "px";
@@ -840,11 +840,11 @@ function resize(e)
 
 	if (render == render_3d)
 	{
-		coords_rect[0] = 0; coords_rect[1] = 0; 
+		coords_rect[0] = 0; coords_rect[1] = 0;
 		coords_rect[2] = width; coords_rect[3] = 0;
 		coords_rect[4] = width; coords_rect[5] = height;
-		coords_rect[6] = 0; coords_rect[7] = height;		
-		
+		coords_rect[6] = 0; coords_rect[7] = height;
+
 		ctx.bufferData(ctx.ARRAY_BUFFER, coords_rect, ctx.STATIC_DRAW);
 
 		ctx.uniform1f(width_uniform, width);
@@ -869,23 +869,23 @@ function resize(e)
 
 function init2d(c)
 {
-	try 
+	try
 	{
 		ctx = c.getContext("2d");
 	}
-	catch(e) 
+	catch(e)
 	{
 		ctx = null;
 		return;
 	}
-	
+
 	render = render_2d;
 
 	window.onresize = resize;
-	resize(null);	
-	
+	resize(null);
+
 	//document.getElementById("msg").innerHTML = "RENDERING: Canvas-2D";
-	
+
 	requestAnimationFrame(animate);
 }
 
@@ -893,24 +893,24 @@ function init()
 {
     var c=document.getElementById("ascii");
     img=document.getElementById("font");
-	
-	try 
+
+	try
 	{
-		ctx = 
-			c.getContext("webgl") || 
+		ctx =
+			c.getContext("webgl") ||
 			c.getContext("experimental-webgl");
 	}
-	catch(e) 
+	catch(e)
 	{
 		ctx = null;
 	}
-	
+
 	if (!ctx)
 	{
 		init2d(c);
-		return;		
+		return;
 	}
-	
+
 	render = render_3d;
 
 	var vb = ctx.createBuffer();
@@ -920,39 +920,39 @@ function init()
 	ctx.activeTexture(ctx.TEXTURE1);
 	var fnt = ctx.createTexture();
 	ctx.bindTexture(ctx.TEXTURE_2D, fnt);
-	ctx.texParameteri(ctx.TEXTURE_2D, ctx.TEXTURE_WRAP_S, ctx.CLAMP_TO_EDGE); 
+	ctx.texParameteri(ctx.TEXTURE_2D, ctx.TEXTURE_WRAP_S, ctx.CLAMP_TO_EDGE);
 	ctx.texParameteri(ctx.TEXTURE_2D, ctx.TEXTURE_WRAP_T, ctx.CLAMP_TO_EDGE);
 	ctx.texParameteri(ctx.TEXTURE_2D, ctx.TEXTURE_MIN_FILTER, ctx.NEAREST);
 	ctx.texParameteri(ctx.TEXTURE_2D, ctx.TEXTURE_MAG_FILTER, ctx.NEAREST);
 	ctx.texImage2D(ctx.TEXTURE_2D, 0, ctx.RGBA, ctx.RGBA, ctx.UNSIGNED_BYTE, img);
-	
+
 	ctx.activeTexture(ctx.TEXTURE0);
 	tex = ctx.createTexture();
 	ctx.bindTexture(ctx.TEXTURE_2D, tex);
-	ctx.texParameteri(ctx.TEXTURE_2D, ctx.TEXTURE_WRAP_S, ctx.CLAMP_TO_EDGE); 
+	ctx.texParameteri(ctx.TEXTURE_2D, ctx.TEXTURE_WRAP_S, ctx.CLAMP_TO_EDGE);
 	ctx.texParameteri(ctx.TEXTURE_2D, ctx.TEXTURE_WRAP_T, ctx.CLAMP_TO_EDGE);
 	ctx.texParameteri(ctx.TEXTURE_2D, ctx.TEXTURE_MIN_FILTER, ctx.NEAREST);
 	ctx.texParameteri(ctx.TEXTURE_2D, ctx.TEXTURE_MAG_FILTER, ctx.NEAREST);
 	ctx.texImage2D(ctx.TEXTURE_2D, 0, ctx.RGBA, 256,64,0, ctx.RGBA, ctx.UNSIGNED_BYTE, new Uint8Array(256*64*4));
-	
+
 	var vs = ctx.createShader(ctx.VERTEX_SHADER);
 	ctx.shaderSource( vs, document.getElementById('vs').innerHTML );
 	ctx.compileShader(vs);
-	if (!ctx.getShaderParameter(vs, ctx.COMPILE_STATUS)) 
+	if (!ctx.getShaderParameter(vs, ctx.COMPILE_STATUS))
 		console.log(ctx.getShaderInfoLog(vs));
 
 	var fs = ctx.createShader(ctx.FRAGMENT_SHADER);
 	ctx.shaderSource( fs, document.getElementById('fs').innerHTML );
 	ctx.compileShader(fs);
-	if (!ctx.getShaderParameter(fs, ctx.COMPILE_STATUS)) 
+	if (!ctx.getShaderParameter(fs, ctx.COMPILE_STATUS))
 		console.log(ctx.getShaderInfoLog(fs));
-	
+
 	var prg = ctx.createProgram();
 	ctx.attachShader(prg,vs);
 	ctx.attachShader(prg,fs);
 	ctx.linkProgram(prg);
 	ctx.useProgram(prg);
-	
+
 	// attribs
 	var xy = ctx.getAttribLocation(prg, "xy");
 	ctx.vertexAttribPointer(xy, 2, ctx.FLOAT, false, 0, 0);
@@ -967,10 +967,10 @@ function init()
 	height_uniform = ctx.getUniformLocation(prg, "height");
 
 	window.onresize = resize;
-	resize(null);	
-	
+	resize(null);
+
 	// document.getElementById("msg").innerHTML = "RENDERING: Canvas-WebGL";
-	
+
 	requestAnimationFrame(animate);
 }
 
@@ -983,7 +983,7 @@ function animate()
 	if (set_output)
 	{
 		var ofs = set_output( width, height );
-		
+
 		if (front_offset != ofs || front_buffer==null)
 		{
 			front_buffer = new Uint8Array(Module.HEAPU8.buffer, ofs, 256*64*4);
@@ -997,7 +997,7 @@ function animate()
 	{
 		// loading progress renderer
 	}
-	
+
 	requestAnimationFrame(animate);
 }
 
@@ -1005,39 +1005,39 @@ function render_2d()
 {
 	if (!back_buffer)
 		back_buffer = new Uint8Array(256*64*4);
-		
+
 	// copy to screen
 	for (var y=0; y<height; y++)
 	{
 		for (var x=0; x<width; x++)
 		{
 			var idx = 4*(x+y*256);
-			
+
 			var glyph = front_buffer[idx];
 			var attr = front_buffer[idx+1];
-			
+
 			if (glyph!=back_buffer[idx] || attr!=back_buffer[idx+1])
 			{
 				back_buffer[idx] = glyph;
 				back_buffer[idx+1] = attr;
 
 				var bg = attr>>4;
-				
+
 				var bx = (bg&0x3)*128;
 				var by = (bg>>2)*112;
-				
+
 				ctx.drawImage(img,bx,by,8,14,x*8,y*14,8,14);
-				
+
 				if (glyph>32 && ((attr>>4) ^ (attr&0xF))!=0)
 				{
 					var gx = (glyph&0xF)*8;
 					var gy = (glyph>>4)*14;
-					
+
 					var fg = attr&0xF;
-					
+
 					var fx = (fg&0x3)*128 + gx;
 					var fy = (fg>>2)*112 + gy;
-				
+
 					ctx.drawImage(img,fx,fy,8,14,x*8,y*14,8,14);
 				}
 			}
@@ -1046,7 +1046,7 @@ function render_2d()
 }
 
 function render_3d()
-{	
+{
 	ctx.texSubImage2D(ctx.TEXTURE_2D, 0, 0, 0, 256,64, ctx.RGBA, ctx.UNSIGNED_BYTE, front_buffer);
 	ctx.viewport(vp_x,vp_y,vp_w,vp_h);
 	ctx.drawArrays(ctx.TRIANGLE_FAN,0,4);
@@ -1055,6 +1055,7 @@ function render_3d()
 
 // HI SCORE
 function get_hiscore(uri) {
+	return;
 	var get_xhr = new XMLHttpRequest();
 
 	// detect if we are on HTTP or HTTPS
@@ -1079,8 +1080,9 @@ function get_hiscore(uri) {
 var xhr_ptr;
 var xhr_siz;
 
-function post_hiscore(uri) 
+function post_hiscore(uri)
 {
+	return;
 	// simplest way would be to read file in c++
 	// pass it here as a pointer to heap
 	// create a copy of it here (blob)
@@ -1118,7 +1120,7 @@ function post_hiscore(uri)
 </head>
 
   <body>
- 
+
 	<canvas id='ascii' width="720" height="392"></canvas>
 
     <script type='text/javascript'>
@@ -1157,12 +1159,12 @@ function post_hiscore(uri)
 	var Module = {
 		preRun: [],
 		postRun: [init_api],
-		
+
 		  print: function(text) { /*console.log(text)*/ },
 		  printErr: function(text) { /*console.error(text)*/ }
-  
+
 	};
-  
+
 
 	(function() {
 	  var memoryInitializer = 'temp.html.mem?v=1.5';
